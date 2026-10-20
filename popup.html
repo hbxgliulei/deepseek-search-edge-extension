@@ -35,74 +35,36 @@
   }
   .icon-btn:hover { color: #e6edf3; border-color: #484f58; }
 
-  .main { padding: 10px 12px 8px; }
-  .search-row { display: flex; gap: 6px; }
+  .main { padding: 12px; }
   #q {
-    flex: 1;
+    width: 100%;
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 6px;
     color: #e6edf3;
-    font-size: 13px;
-    padding: 8px 10px;
+    font-size: 14px;
+    padding: 10px 12px;
     font-family: inherit;
     outline: none;
   }
   #q:focus { border-color: #58a6ff; }
+  .row { display: flex; gap: 8px; margin-top: 8px; }
   #searchBtn {
+    flex: 1;
     background: #58a6ff;
     border: none;
     color: #04121f;
     font-size: 13px;
     font-weight: 500;
-    padding: 0 14px;
+    padding: 8px 0;
     border-radius: 6px;
     cursor: pointer;
     font-family: inherit;
   }
   #searchBtn:disabled { opacity: .5; cursor: not-allowed; }
-
-  .status { font-size: 11px; color: #8b949e; padding: 7px 12px 0; min-height: 16px; }
-  .status.error { color: #f85149; }
-
-  .results { max-height: 380px; overflow-y: auto; padding: 6px 12px 10px; }
-  .card {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 10px 11px;
-    margin-bottom: 8px;
-  }
-  .card h3 { margin: 0 0 4px; font-size: 13px; font-weight: 500; line-height: 1.45; }
-  .card h3 a { color: #58a6ff; text-decoration: none; }
-  .card h3 a:hover { text-decoration: underline; }
-  .meta { font-size: 11px; color: #8b949e; margin-bottom: 6px; }
-  .summary { font-size: 12px; line-height: 1.6; color: #c9d1d9; word-break: break-word; }
-  .actions { margin-top: 8px; display: flex; gap: 8px; }
-  .link-btn {
-    background: transparent;
-    border: 1px solid #30363d;
-    color: #8b949e;
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: inherit;
-    text-decoration: none;
-  }
-  .link-btn:hover { color: #e6edf3; border-color: #484f58; }
-  .article {
-    margin-top: 8px;
-    border-top: 1px solid #30363d;
-    padding-top: 8px;
-    font-size: 12px;
-    line-height: 1.7;
-    color: #c9d1d9;
-    max-height: 220px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
+  .tip { font-size: 11px; color: #6e7681; margin-top: 8px; line-height: 1.6; }
+  .status { font-size: 11px; margin-top: 6px; color: #8b949e; }
+  .status.warn { color: #d29922; }
 
   .settings {
     display: none;
@@ -123,7 +85,7 @@
     outline: none;
   }
   .settings input:focus { border-color: #58a6ff; }
-  .settings .row { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
+  .settings .actions { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
   .primary {
     background: #58a6ff;
     color: #04121f;
@@ -146,22 +108,21 @@
 </header>
 
 <div class="main">
-  <div class="search-row">
-    <input id="q" type="text" placeholder="输入关键词，回车搜索" autofocus>
+  <input id="q" type="text" placeholder="输入关键词，回车搜索" autofocus>
+  <div class="row">
     <button id="searchBtn">搜索</button>
   </div>
+  <div class="tip">回车后在新标签页以完整网页列出结果（支持 site: / lang: / after: 语法）</div>
+  <div class="status" id="status"></div>
 </div>
-
-<div class="status" id="status">就绪</div>
-<div class="results" id="results"></div>
 
 <div class="settings" id="settings">
   <label>DeepSeek API Key</label>
   <input type="text" id="cfgKey" placeholder="sk-...">
   <div class="hint">保存在扩展本地存储，仅用于调用 api.deepseek.com。</div>
-  <label>返回条数（1–50）</label>
-  <input type="number" id="cfgCount" min="1" max="50" value="8">
-  <div class="row">
+  <label>单次请求条数（10–50，结果页每页显示 10 条）</label>
+  <input type="number" id="cfgCount" min="10" max="50" value="30">
+  <div class="actions">
     <button class="icon-btn" id="cancelBtn">关闭</button>
     <button class="primary" id="saveBtn">保存</button>
   </div>
