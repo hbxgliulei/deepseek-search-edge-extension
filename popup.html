@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>DeepSeek 搜索</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    width: 400px;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 13px;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #30363d;
+  }
+  .brand { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #58a6ff; }
+  .spacer { flex: 1; }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .icon-btn:hover { color: #e6edf3; border-color: #484f58; }
+
+  .main { padding: 10px 12px 8px; }
+  .search-row { display: flex; gap: 6px; }
+  #q {
+    flex: 1;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #e6edf3;
+    font-size: 13px;
+    padding: 8px 10px;
+    font-family: inherit;
+    outline: none;
+  }
+  #q:focus { border-color: #58a6ff; }
+  #searchBtn {
+    background: #58a6ff;
+    border: none;
+    color: #04121f;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #searchBtn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .status { font-size: 11px; color: #8b949e; padding: 7px 12px 0; min-height: 16px; }
+  .status.error { color: #f85149; }
+
+  .results { max-height: 380px; overflow-y: auto; padding: 6px 12px 10px; }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 10px 11px;
+    margin-bottom: 8px;
+  }
+  .card h3 { margin: 0 0 4px; font-size: 13px; font-weight: 500; line-height: 1.45; }
+  .card h3 a { color: #58a6ff; text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .meta { font-size: 11px; color: #8b949e; margin-bottom: 6px; }
+  .summary { font-size: 12px; line-height: 1.6; color: #c9d1d9; word-break: break-word; }
+  .actions { margin-top: 8px; display: flex; gap: 8px; }
+  .link-btn {
+    background: transparent;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+  }
+  .link-btn:hover { color: #e6edf3; border-color: #484f58; }
+  .article {
+    margin-top: 8px;
+    border-top: 1px solid #30363d;
+    padding-top: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    max-height: 220px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .settings {
+    display: none;
+    border-top: 1px solid #30363d;
+    padding: 10px 12px 12px;
+  }
+  .settings.show { display: block; }
+  .settings label { display: block; font-size: 11px; color: #8b949e; margin: 8px 0 4px; }
+  .settings input[type="text"], .settings input[type="number"] {
+    width: 100%;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    color: #e6edf3;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+  }
+  .settings input:focus { border-color: #58a6ff; }
+  .settings .row { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
+  .primary {
+    background: #58a6ff;
+    color: #04121f;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .hint { font-size: 10px; color: #6e7681; margin-top: 4px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span>DeepSeek 搜索</div>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="settingsBtn">设置</button>
+</header>
+
+<div class="main">
+  <div class="search-row">
+    <input id="q" type="text" placeholder="输入关键词，回车搜索" autofocus>
+    <button id="searchBtn">搜索</button>
+  </div>
+</div>
+
+<div class="status" id="status">就绪</div>
+<div class="results" id="results"></div>
+
+<div class="settings" id="settings">
+  <label>DeepSeek API Key</label>
+  <input type="text" id="cfgKey" placeholder="sk-...">
+  <div class="hint">保存在扩展本地存储，仅用于调用 api.deepseek.com。</div>
+  <label>返回条数（1–50）</label>
+  <input type="number" id="cfgCount" min="1" max="50" value="8">
+  <div class="row">
+    <button class="icon-btn" id="cancelBtn">关闭</button>
+    <button class="primary" id="saveBtn">保存</button>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
