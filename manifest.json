@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "DeepSeek 搜索",
-  "version": "1.0.0",
-  "description": "在 Edge 工具栏直接调用 DeepSeek 网页搜索与抓取，免开新标签页。",
+  "version": "1.1.0",
+  "description": "在 Edge 工具栏搜索 DeepSeek 网页结果，以完整结果页展示，支持抓取全文。",
   "action": {
     "default_popup": "popup.html",
     "default_title": "DeepSeek 搜索",
@@ -17,6 +17,10 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage"],
-  "host_permissions": ["https://api.deepseek.com/*"]
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.deepseek.com/*"
+  ]
 }
